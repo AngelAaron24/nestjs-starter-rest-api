@@ -15,6 +15,7 @@ import { ArticleOutput } from '../dtos/article-output.dto';
 import { Article } from '../entities/article.entity';
 import { ArticleRepository } from '../repositories/article.repository';
 import { ArticleAclService } from './article-acl.service';
+//import { ClientKafka } from '@nestjs/microservices';
 
 @Injectable()
 export class ArticleService {
@@ -22,7 +23,7 @@ export class ArticleService {
     private repository: ArticleRepository,
     private userService: UserService,
     private aclService: ArticleAclService,
-    private readonly logger: AppLogger,
+    private readonly logger: AppLogger, //@Inject('KAFKA_SERVICE') private readonly kafkaClient: ClientKafka,
   ) {
     this.logger.setContext(ArticleService.name);
   }
@@ -156,5 +157,12 @@ export class ArticleService {
 
     this.logger.log(ctx, `calling ${ArticleRepository.name}.remove`);
     await this.repository.remove(article);
+
+    /*
+    this.kafkaClient.emit('article.deleted', {
+      userId: actor.id,
+      articleId: id,
+      message: `Article with ID ${id} has been deleted`,
+    });*/
   }
 }

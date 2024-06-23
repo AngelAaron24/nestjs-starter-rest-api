@@ -9,10 +9,16 @@ import { UserOutput } from '../dtos/user-output.dto';
 import { UpdateUserInput } from '../dtos/user-update-input.dto';
 import { User } from '../entities/user.entity';
 import { UserRepository } from '../repositories/user.repository';
+//import { ClientProxy } from '@nestjs/microservices';
+//import { firstValueFrom } from 'rxjs';
+//import { Redis as RedisClient } from 'ioredis';
+//import { CACHE_MANAGER } from '@nestjs/cache-manager';
+//import { cache } from 'joi';
 
 @Injectable()
 export class UserService {
   constructor(
+    // @Inject(CACHE_MANAGER) private readonly client: RedisClient,
     private repository: UserRepository,
     private readonly logger: AppLogger,
   ) {
@@ -62,18 +68,17 @@ export class UserService {
   ): Promise<{ users: UserOutput[]; count: number }> {
     this.logger.log(ctx, `${this.getUsers.name} was called`);
 
-    this.logger.log(ctx, `calling ${UserRepository.name}.findAndCount`);
-    const [users, count] = await this.repository.findAndCount({
+    const [users] = await this.repository.findAndCount({
       where: {},
       take: limit,
       skip: offset,
     });
 
-    const usersOutput = plainToClass(UserOutput, users, {
+    const userOutputs = plainToClass(UserOutput, users, {
       excludeExtraneousValues: true,
     });
 
-    return { users: usersOutput, count };
+    return { users: userOutputs, count: userOutputs.length };
   }
 
   async findById(ctx: RequestContext, id: number): Promise<UserOutput> {

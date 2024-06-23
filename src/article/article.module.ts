@@ -9,14 +9,37 @@ import { Article } from './entities/article.entity';
 import { ArticleRepository } from './repositories/article.repository';
 import { ArticleService } from './services/article.service';
 import { ArticleAclService } from './services/article-acl.service';
+//import { ClientsModule, Transport } from '@nestjs/microservices';
+//import { KafkaConsumerService } from './kafka-consumer.service';
 
 @Module({
-  imports: [SharedModule, TypeOrmModule.forFeature([Article]), UserModule],
+  imports: [
+    /*
+    ClientsModule.register([
+      {
+        name: 'KAFKA_SERVICE',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'my-app',
+            brokers: ['localhost:29092'],
+          },
+          consumer: {
+            groupId: 'my-consumer-group',
+          },
+        },
+      },
+    ]), */
+    SharedModule,
+    TypeOrmModule.forFeature([Article]),
+    UserModule,
+  ],
   providers: [
     ArticleService,
     JwtAuthStrategy,
     ArticleAclService,
     ArticleRepository,
+    //KafkaConsumerService,
   ],
   controllers: [ArticleController],
   exports: [ArticleService],
